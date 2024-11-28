@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Repositories.Products;
 
 namespace Repositories.Extensions;
 
@@ -19,6 +20,10 @@ public static class RepositoryExtensions
                 sqlServerOptionsAction.MigrationsAssembly(typeof(RepositoryAssembly).Assembly.FullName);
             });
         });
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepsitory<>));
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

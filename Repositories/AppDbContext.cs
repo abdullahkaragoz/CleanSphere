@@ -1,19 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Repositories.Products;
 using System.Reflection;
 
-namespace Repositories
+namespace Repositories;
+
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public DbSet<Product> Products { get; set; } = default!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public DbSet<Product> Products { get; set; } = default!;
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-            base.OnModelCreating(modelBuilder);
-        }
-
+        base.OnModelCreating(modelBuilder);
     }
+
 }

@@ -15,7 +15,7 @@ namespace Repositories
         
         public async ValueTask AddAsync(T entity) => await _dbSet.AddAsync(entity);
 
-        public async ValueTask<T?> GetByIdAsync(T entity) => await _dbSet.FindAsync(entity);
+        public async ValueTask<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
         
         public void Update(T entity) => _dbSet.Update(entity);
         

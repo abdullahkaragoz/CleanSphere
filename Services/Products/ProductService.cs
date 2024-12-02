@@ -1,4 +1,5 @@
-﻿using Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Repositories;
 using Repositories.Products;
 using System.Net;
 
@@ -6,7 +7,7 @@ namespace Services.Products;
 
 public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork) : IProductService
 {
-    public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
+    public async Task<ServiceResult<List<ProductDto>>> GetTopPriceAsync(int count)
     {
         var products = await productRepository.GetTopPriceProductsAsync(count);
 
@@ -18,7 +19,16 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         };
     }
 
-    public async Task<ServiceResult<ProductDto>> GetProductByIdAsync(int id)
+    public async Task<ServiceResult<List<ProductDto>>> GetAllListAsync()
+    {
+        var product = await productRepository.GetAll().ToListAsync();
+
+        var productAsDto = product.Select(p => new ProductDto(p.Id,p.Name,p.Price, p.Stock)).ToList();
+
+        return ServiceResult<List<ProductDto>>.Success(productAsDto);
+    }
+
+    public async Task<ServiceResult<ProductDto>> GetByIdAsync(int id)
     {
         var product = await productRepository.GetByIdAsync(id);
 
@@ -30,7 +40,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         return new ServiceResult<ProductDto> { Data = productAsDto };
     }
 
-    public async Task<ServiceResult<CreateProductResponse>> CreateProductAsync(CreateProductRequest request)
+    public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
     {
         var product = new Product()
         {
@@ -44,7 +54,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         return ServiceResult<CreateProductResponse>.Success(new CreateProductResponse(product.Id));
     }
 
-    public async Task<ServiceResult> UpdateProductAsync(int id, UpdateProductRequest request)
+    public async Task<ServiceResult> UpdateAsync(int id, UpdateProductRequest request)
     {
         var product = await productRepository.GetByIdAsync(id);
 
@@ -58,10 +68,10 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Success();
+        return ServiceResult.Success(HttpStatusCode.NoContent);
     }
 
-    public async Task<ServiceResult> DeleteProduct(int id)
+    public async Task<ServiceResult> DeleteAsync(int id)
     {
         var product = await productRepository.GetByIdAsync(id);
 
@@ -70,7 +80,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         productRepository.Delete(product);
         await unitOfWork.SaveChangesAsync();
-        return ServiceResult.Success();
+        return ServiceResult.Success(HttpStatusCode.NoContent);
     }
 
 }

@@ -23,7 +23,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     {
         var product = await productRepository.GetAll().ToListAsync();
 
-        var productAsDto = product.Select(p => new ProductDto(p.Id,p.Name,p.Price, p.Stock)).ToList();
+        var productAsDto = product.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
 
         return ServiceResult<List<ProductDto>>.Success(productAsDto);
     }
@@ -75,12 +75,22 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     {
         var product = await productRepository.GetByIdAsync(id);
 
-        if(product is null)
+        if (product is null)
             return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
 
         productRepository.Delete(product);
         await unitOfWork.SaveChangesAsync();
         return ServiceResult.Success(HttpStatusCode.NoContent);
+    }
+
+    public async Task<ServiceResult<List<ProductDto>>> GetPagedAllListAsync(int pageNumber, int pageSize)
+    {
+        var products = await productRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+
+        return ServiceResult<List<ProductDto>>.Success(productsAsDto);
+
     }
 
 }

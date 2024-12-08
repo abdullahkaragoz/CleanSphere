@@ -33,7 +33,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         var product = await productRepository.GetByIdAsync(id);
 
         if (product is null)
-            ServiceResult<ProductDto>.Fail("Product not found", HttpStatusCode.NotFound);
+            return ServiceResult<ProductDto>.Fail("Product not found", HttpStatusCode.NotFound);
 
         var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
 
@@ -65,6 +65,21 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         product.Name = request.Name;
         product.Price = request.Price;
         product.Stock = request.Stock;
+
+        productRepository.Update(product);
+        await unitOfWork.SaveChangesAsync();
+
+        return ServiceResult.Success(HttpStatusCode.NoContent);
+    }
+
+    public async Task<ServiceResult> UpdateStockAsync(UpdateProductStockRequest request)
+    {
+        var product = await productRepository.GetByIdAsync(request.ProductId);
+
+        if (product is null)
+            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
+
+        product.Stock = request.stock;
 
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();

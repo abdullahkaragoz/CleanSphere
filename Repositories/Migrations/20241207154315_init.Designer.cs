@@ -11,7 +11,7 @@ using Repositories;
 namespace Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241125213622_init")]
+    [Migration("20241207154315_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -24,7 +24,7 @@ namespace Repositories.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Repositories.Product", b =>
+            modelBuilder.Entity("Repositories.Products.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

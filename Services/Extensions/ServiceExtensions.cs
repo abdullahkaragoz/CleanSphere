@@ -17,6 +17,8 @@ public static class ServiceExtensions
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         return services;
     }
 }

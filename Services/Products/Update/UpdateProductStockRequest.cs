@@ -1,3 +1,3 @@
-﻿namespace Services.Products;
+﻿namespace Services.Products.Update;
 
 public record UpdateProductStockRequest(int ProductId, int stock);

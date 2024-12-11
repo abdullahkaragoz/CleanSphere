@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Services.Products;
+namespace Services.Products.Create;
 
 public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
 {

@@ -1,15 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
 using Repositories.Extensions;
+using Services;
 using Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers(opt =>
+{
+    opt.Filters.Add<FluentValidationFilter>();
+    opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddRepositories(builder.Configuration).AddServices(builder.Configuration);
 
 var app = builder.Build();

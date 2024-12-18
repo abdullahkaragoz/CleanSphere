@@ -2,6 +2,7 @@
 using Services.Products;
 using Services.Products.Create;
 using Services.Products.Update;
+using Services.Products.UpdateStock;
 
 namespace API.Controllers;
 

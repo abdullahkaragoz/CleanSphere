@@ -4,13 +4,14 @@ using Repositories;
 using Repositories.Products;
 using Services.Products.Create;
 using Services.Products.Update;
+using Services.Products.UpdateStock;
 using System.Net;
 
 namespace Services.Products;
 
 public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IMapper mapper) : IProductService
 {
-    public async Task<ServiceResult<List<ProductDto>>> GetTopPriceAsync(int count)
+    public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
     {
         var products = await productRepository.GetTopPriceProductsAsync(count);
 
@@ -44,12 +45,12 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
     {
-        var product = new Product()
-        {
-            Name = request.Name,
-            Price = request.Price,
-            Stock = request.Stock,
-        };
+        //async manuel service business check
+        var anyProduct = await productRepository.Where(x => x.Name == request.Name).AnyAsync();
+        if (anyProduct)
+            return ServiceResult<CreateProductResponse>.Fail("Aynı ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.BadRequest);
+
+        var product = mapper.Map<Product>(request);
 
         await productRepository.AddAsync(product);
         await unitOfWork.SaveChangesAsync();
@@ -64,10 +65,11 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         if (product is null)
             return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
 
-        product.Name = request.Name;
-        product.Price = request.Price;
-        product.Stock = request.Stock;
+        var isProductNameExist = await productRepository.Where(x => x.Name == request.Name && x.Id == product.Id).AnyAsync();
+        if (isProductNameExist)
+            return ServiceResult.Fail("Aynı ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.BadRequest);
 
+        product = mapper.Map(request, product);
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();
 

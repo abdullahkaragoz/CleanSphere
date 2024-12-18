@@ -2,6 +2,8 @@
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Repositories.Categories;
+using Repositories.Products;
 using Services.ExceptionHandlers;
 using Services.Products;
 using System.Reflection;
@@ -12,8 +14,8 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IProductService, ProductService>();
-
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddFluentValidationAutoValidation();
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

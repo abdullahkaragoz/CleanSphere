@@ -10,6 +10,7 @@ builder.Services.AddControllers(opt =>
     opt.Filters.Add<FluentValidationFilter>();
     opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
 });
+
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

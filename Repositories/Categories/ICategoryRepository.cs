@@ -2,7 +2,7 @@
 {
     public interface ICategoryRepository : IGenericRepository<Category>
     {
-        Task<Category?> GetCategoryByProductsAsync(int id);
+        Task<Category?> GetCategoryWithProductsAsync(int id);
         IQueryable<Category?> GetCategoryWithProductsAsync();
     }
 }

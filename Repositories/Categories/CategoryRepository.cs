@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Repositories.Categories;
 public class CategoryRepository(AppDbContext context) : GenericRepsitory<Category>(context), ICategoryRepository
 {
-    public Task<Category?> GetCategoryByProductsAsync(int id)
+    public Task<Category?> GetCategoryWithProductsAsync(int id)
     {
        return context.Categories.Include(c => c.Products).FirstOrDefaultAsync(x=>x.Id == id);
     }

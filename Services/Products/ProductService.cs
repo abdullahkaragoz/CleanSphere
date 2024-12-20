@@ -63,7 +63,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         var product = await productRepository.GetByIdAsync(id);
 
         if (product is null)
-            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
+            return ServiceResult.Fail("Güncellenecek ürün bulunamadı", HttpStatusCode.NotFound);
 
         var isProductNameExist = await productRepository.Where(x => x.Name == request.Name && x.Id == product.Id).AnyAsync();
         if (isProductNameExist)
@@ -81,7 +81,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         var product = await productRepository.GetByIdAsync(request.ProductId);
 
         if (product is null)
-            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
+            return ServiceResult.Fail("Güncellenecek ürün bulunamadı", HttpStatusCode.NotFound);
 
         product.Stock = request.stock;
 

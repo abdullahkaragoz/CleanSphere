@@ -17,12 +17,12 @@ public class CategoryService(ICategoryRepository categoryRepository, IUnitOfWork
         if (anyCategory)
             return ServiceResult<int>.Fail("categori ismi veritabanında bulunmaktadır.",System.Net.HttpStatusCode.NotFound);
 
-        var newCategory = new Category { Name = request.Name };
+        var newCategory = mapper.Map<Category>(request);
 
         await categoryRepository.AddAsync(newCategory);
         await unitOfWork.SaveChangesAsync();
 
-        return ServiceResult<int>.Success(newCategory.Id);
+        return ServiceResult<int>.SuccessAsCreated(newCategory.Id,$"api/categories{newCategory.Id}");
     }
 
     public async Task<ServiceResult> UpdateAsync(int id, UpdateCategoryRequest request)

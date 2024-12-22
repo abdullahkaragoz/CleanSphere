@@ -16,6 +16,10 @@ public class CreateProductRequestValidator : AbstractValidator<CreateProductRequ
         RuleFor(y => y.Price)
             .GreaterThan(0).WithMessage("Ürün fiyatı 0 dan büyük olmalıdır.");
 
+        //categoryid validation
+        RuleFor(y => y.CategoryId)
+            .GreaterThan(0).WithMessage("Ürün kategori değeri 0 dan büyük olmalıdır.");
+
         //stock inclusive between validation
         RuleFor(z => z.Stock)
             .InclusiveBetween(1, 100).WithMessage("stok adedi 1 ile 100 arasında olmalıdır.");

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repositories.Categories;
+using Repositories.Interceptors;
 using Repositories.Products;
 
 namespace Repositories.Extensions;
@@ -20,12 +21,12 @@ public static class RepositoryExtensions
             {
                 sqlServerOptionsAction.MigrationsAssembly(typeof(RepositoryAssembly).Assembly.FullName);
             });
+
+            opt.AddInterceptors(new AuditDbContextInterceptor());
         });
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepsitory<>));
-
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

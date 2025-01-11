@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repositories.Products;
+using Services.Filters;
 using Services.Products;
 using Services.Products.Create;
 using Services.Products.Update;
@@ -26,6 +28,7 @@ public class ProductsController(IProductService productService) : CustomBaseCont
     [HttpPatch("UpdateStock")]
     public async Task<IActionResult> UpdateStock(UpdateProductStockRequest request) => CreateActionResult(await productService.UpdateStockAsync(request));
 
-    [HttpDelete("{id}")]
+    [ServiceFilter(typeof(NotFoundFilter<Product, int>))]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id) => CreateActionResult(await productService.DeleteAsync(id));
 }

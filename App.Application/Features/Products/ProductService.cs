@@ -3,7 +3,9 @@ using App.Application.Contracts.Persistence;
 using App.Application.Features.Products.Create;
 using App.Application.Features.Products.Update;
 using App.Application.Features.Products.UpdateStock;
+using App.Application.ServiceBus;
 using App.Domain.Entities;
+using App.Domain.Events;
 using AutoMapper;
 using System.Net;
 
@@ -13,7 +15,8 @@ public class ProductService(
     IProductRepository productRepository,
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    ICacheService cacheService
+    ICacheService cacheService,
+    IServiceBus serviceBus  
     ) : IProductService
 {
     private const string ProductListCacheKey = "ProductListCacheKey";
@@ -68,6 +71,8 @@ public class ProductService(
 
         await productRepository.AddAsync(product);
         await unitOfWork.SaveChangesAsync();
+
+        await serviceBus.PublishAsync(new ProductAddedEvent(product.Id,product.Name,product.Price));
 
         return ServiceResult<CreateProductResponse>.SuccessAsCreated(new CreateProductResponse(product.Id), $"api/products/{product.Id}");
     }
